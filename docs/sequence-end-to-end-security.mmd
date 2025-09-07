@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant User as Frontend React
+    participant Proxy as Reverse Proxy
+    participant Backend as Spring Boot API
+    participant DB as PostgreSQL / Recursos
+
+    %% Usuario inicia sesión
+    User->>Proxy: POST /login {user, pass}
+    Proxy->>Backend: POST /login {user, pass}
+    Backend->>DB: Validar usuario
+    DB-->>Backend: Usuario válido
+    Backend-->>Proxy: access_token + refresh_token (JWT) en cookies seguras
+    Proxy-->>User: Set-Cookie access_token, refresh_token
+
+    %% Usuario realiza petición a un recurso
+    User->>Proxy: GET /resources (cookies JWT incluidas)
+    Proxy->>Backend: GET /resources + Authorization: API_KEY
+    Backend->>Backend: Validar API_KEY + JWT de la cookie
+    Backend->>DB: Ejecutar query / generar acceso temporal
+    DB-->>Backend: Resultado
+    Backend-->>Proxy: Respuesta JSON
+    Proxy-->>User: Respuesta JSON al frontend
+
+    %% Revocación automática (Scheduler interno)
+    Backend->>DB: Revisar accesos temporales expirados
+    DB-->>Backend: Lista de accesos expirados
+    Backend->>DB: Revoke usuarios temporales

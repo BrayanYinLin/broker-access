@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant User as Navegador
+    participant Nginx as Nginx (Frontend + Proxy)
+    participant Backend as Spring Boot API
+    participant DB as PostgreSQL
+
+    User->>Nginx: POST /api/access/request {recurso, duración}
+    Nginx->>Backend: POST /access/request
+    Backend->>Backend: Validar JWT + permisos del usuario
+    Backend->>DB: Crear acceso temporal + registrar log
+    DB-->>Backend: Acceso temporal generado
+    Backend-->>Nginx: Confirmación + credenciales temporales
+    Nginx-->>User: Mostrar credenciales y tiempo de expiración

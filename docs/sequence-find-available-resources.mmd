@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant User as Navegador
+    participant Nginx as Nginx (Frontend + Proxy)
+    participant Backend as Spring Boot API
+    participant DB as PostgreSQL
+
+    User->>Nginx: GET /api/resources
+    Nginx->>Backend: GET /resources + Authorization: API_KEY
+    Backend->>Backend: Validar API_KEY + JWT
+    Backend->>DB: Consultar acceso a recurso
+    DB-->>Backend: Resultado
+    Backend-->>Nginx: Respuesta JSON
+    Nginx-->>User: Mostrar recursos en pantalla

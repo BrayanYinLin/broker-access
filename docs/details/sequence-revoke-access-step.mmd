@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant Scheduler as Spring Scheduler
+    participant Backend as Spring Boot API
+    participant DB as PostgreSQL
+
+    Scheduler->>Backend: Revisar accesos expirados
+    Backend->>DB: Obtener usuarios temporales vencidos
+    DB-->>Backend: Lista de usuarios a revocar
+    Backend->>DB: Revocar usuarios + registrar log
+    DB-->>Backend: Confirmación

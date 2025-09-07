@@ -1,0 +1,40 @@
+---
+title: Diagrama de arquitectura
+---
+
+flowchart TD
+    subgraph User["👤 Usuario (Dev)"]
+        UI["Frontend Web\n(Solicita acceso)"]
+    end
+
+    subgraph Broker["🛡️ Broker de Acceso Temporal"]
+        API["API Backend
+        (NestJS / Spring Boot)"]
+        Core["Core de Gestión
+	        Autenticación
+	        Logs
+	        Scheduler de Expiración"]
+        Factory["Factory
+        (Selecciona estrategia)"]
+        StrategyPostgres["Strategy: PostgreSQL
+         CREATE ROLE
+          DROP ROLE"]
+    end
+
+    subgraph Resource["💾 Recurso Protegido"]
+        Postgres["PostgreSQL DB
+        (Docker/Staging)"]
+    end
+
+    UI --> API
+    API --> Core
+    Core --> Factory
+    Factory --> StrategyPostgres
+    StrategyPostgres --> Postgres
+
+    subgraph Storage["📂 BD Interna"]
+        Logs["Tabla de Logs"]
+        Access["Tabla de Accesos Temporales"]
+    end
+
+    Core --> Storage
