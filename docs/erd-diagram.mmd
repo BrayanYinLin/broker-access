@@ -1,0 +1,66 @@
+erDiagram
+    SYSTEM_STATUS {
+      bool initialized
+    }
+
+    USERS }|--|| ROLE : has
+    USERS ||--o{ REQUESTS : creates 
+    USERS {
+        uuid user_id PK
+        string username UK
+        string email UK
+        string passwordHashed
+        uuid role_id FK
+    }
+
+    ROLE }|--|{ PERMISSIONS : contains
+    ROLE {
+        uuid role_id PK
+        string name UK
+    }
+
+    PERMISSIONS {
+      uuid permission_id PK
+      string name UK
+    }
+
+    RESOURCES ||--|{ RESOURCE_TYPES : is
+    RESOURCES ||--|{ RESOURCE_HEALTH : logs
+    RESOURCES ||--|{ TEMPORARY_CREDENTIALS : has
+    RESOURCES {
+      uuid resource_id
+      uuid resource_type_id FK
+      string name
+      jsonb attributes "{}"
+    }
+
+    RESOURCE_TYPES {
+      uuid resource_type_id PK
+      enum name UK
+    }
+
+    REQUESTS ||--|| RESOURCES : has
+    REQUESTS {
+      uuid id PK
+      uuid user_id FK
+      uuid resource_id FK
+      timestamp requested_at
+      string reason
+      enum status "pending, approved, rejected"
+    }
+
+    RESOURCE_HEALTH {
+      serial id PK
+      uuid resource_id
+      boolean status
+      timestamp checked_at
+    }
+
+    TEMPORARY_CREDENTIALS {
+      uuid temporary_credential_id PK
+      uuid resource_id FK
+      string username
+      enum status "active, expired, revoked"
+      timestamp created_at
+      timestamp expires_at
+    }

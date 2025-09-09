@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant User as Usuario (Navegador)
+    participant Front as Frontend (React)
+    participant Back as Backend (API)
+    participant DB as Base de Datos
+
+    User->>Front: Abre la aplicación
+    Front->>Back: GET /system/status
+    Back->>DB: SELECT COUNT(*) FROM users WHERE role = 'ADMIN'
+    DB-->>Back: 0
+    Back-->>Front: { initialized: false }
+
+    Front->>User: Muestra pantalla de configuración inicial
+
+    User->>Front: Ingresa datos del primer admin
+    Front->>Back: POST /users/admin/setup { data }
+    Back->>DB: INSERT INTO users (role=ADMIN, ...)
+    DB-->>Back: OK
+    Back-->>Front: 201 Created
+
+    Front->>User: Redirige a login normal
+
+    Note over Back,DB: En adelante<br/>/system/status siempre responde<br/>{ initialized: true }
