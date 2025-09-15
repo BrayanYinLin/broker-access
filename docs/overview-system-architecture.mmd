@@ -1,40 +1,9 @@
----
-title: Diagrama de arquitectura
----
+architecture-beta
+    group platform(cloud)[Broker de Acceso]
 
-flowchart TD
-    subgraph User["👤 Usuario (Dev)"]
-        UI["Frontend Web\n(Solicita acceso)"]
-    end
+    service frontend(internet)[Frontend Web] in platform
+    service api(server)[API Backend] in platform
+    service storage(database)[BD Interna] in platform
 
-    subgraph Broker["🛡️ Broker de Acceso Temporal"]
-        API["API Backend
-        (NestJS / Spring Boot)"]
-        Core["Core de Gestión
-	        Autenticación
-	        Logs
-	        Scheduler de Expiración"]
-        Factory["Factory
-        (Selecciona estrategia)"]
-        StrategyPostgres["Strategy: PostgreSQL
-         CREATE ROLE
-          DROP ROLE"]
-    end
-
-    subgraph Resource["💾 Recurso Protegido"]
-        Postgres["PostgreSQL DB
-        (Docker/Staging)"]
-    end
-
-    UI --> API
-    API --> Core
-    Core --> Factory
-    Factory --> StrategyPostgres
-    StrategyPostgres --> Postgres
-
-    subgraph Storage["📂 BD Interna"]
-        Logs["Tabla de Logs"]
-        Access["Tabla de Accesos Temporales"]
-    end
-
-    Core --> Storage
+    frontend:R -- L:api
+    api:R -- L:storage

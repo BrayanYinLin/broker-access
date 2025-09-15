@@ -3,6 +3,26 @@ erDiagram
       bool initialized
     }
 
+    %% Comentarios sobre actor:
+    %% - actor = user_id → Usuario autenticado
+    %% - actor = admin_id → Administrador
+    %% - actor = 'system' → Evento automático del backend
+    %% - actor = 'nginx' → Proxy / cliente externo
+
+    LOGS {
+      uuid log_id PK
+      timestamp created_at
+      string level
+      string actor
+      string action
+      string resource
+      string status
+      text details
+      string ip_address
+    }
+
+    USERS ||--o{ LOGS : "generates"
+
     USERS }|--|| ROLE : has
     USERS ||--o{ REQUESTS : creates 
     USERS {

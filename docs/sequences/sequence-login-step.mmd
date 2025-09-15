@@ -1,0 +1,26 @@
+---
+title: Secuencia de configuración inicial (creación del primer administrador)
+---
+
+sequenceDiagram
+    actor Admin as Administrador (Usuario Inicial)
+    participant Frontend as Frontend Web (Nginx/Proxy)
+    participant API as API Backend (Spring Boot)
+    participant DB as Base de Datos (PostgreSQL)
+
+    %% Flujo principal: Crear primer administrador
+    Admin->>Frontend: Envía formulario de creación de admin
+    Frontend->>API: POST /api/v1/setup/admin { usuario, contraseña }
+    API->>DB: Verificar si existe un administrador
+
+    alt No existe administrador
+        API->>DB: Insertar usuario admin y registrar log
+        API->>DB: Actualizar estado del sistema (inicializado)
+        DB-->>API: Confirmación de operaciones
+        API-->>Frontend: Respuesta: admin creado
+        Frontend-->>Admin: Renderiza dashboard inicial
+    else Ya existe administrador
+        DB-->>API: Resultado: admin existente
+        API-->>Frontend: 409 Conflict (Administrador ya creado)
+        Frontend-->>Admin: Mostrar mensaje de error
+    end

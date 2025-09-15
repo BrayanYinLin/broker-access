@@ -1,0 +1,22 @@
+---
+title: Secuencia de solicitud de acceso temporal a recurso
+---
+
+sequenceDiagram
+    actor Usuario as Usuario
+    participant Frontend as Frontend Web (Nginx/Proxy)
+    participant API as API Backend (Spring Boot)
+    participant DB as Base de Datos (PostgreSQL)
+
+    %% Solicitud de acceso temporal
+    Usuario->>Frontend: Solicita acceso a recurso por un tiempo definido
+    Frontend->>API: POST /api/v1/access/request { recurso, duración }
+    API->>API: Validar JWT y permisos del usuario
+
+    alt Autorización exitosa
+        API->>DB: Registrar solicitud de acceso temporal
+        DB-->>API: Confirmación de registro
+    else Autorización fallida
+        API-->>Frontend: 401/403 Error de autenticación o permisos
+        Frontend-->>Usuario: Mostrar mensaje de error
+    end

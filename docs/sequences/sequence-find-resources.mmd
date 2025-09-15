@@ -1,0 +1,22 @@
+---
+title: Secuencia de listado de recursos
+---
+
+sequenceDiagram
+    actor Cliente as Cliente (Usuario/Agente)
+    participant Frontend as Frontend Web (Nginx)
+    participant API as API Backend (Spring Boot)
+    participant DB as Base de Datos (PostgreSQL)
+
+    Cliente->>Frontend: Solicita lista de recursos
+    Frontend->>API: GET /api/v1/resources + Cookies (JWT) + API_KEY
+    API->>API: Validar API_KEY y JWT
+    alt Autenticación exitosa
+        API->>DB: Consultar recursos
+        DB-->>API: Resultado de la consulta
+        API-->>Frontend: Respuesta JSON con recursos
+        Frontend-->>Cliente: Muestra recursos disponibles
+    else Error de autenticación
+        API-->>Frontend: 401 Unauthorized
+        Frontend->>Cliente: Mostrar mensaje de error
+    end

@@ -1,0 +1,18 @@
+---
+title: Secuencia de validación del estado de inicialización del sistema
+---
+
+sequenceDiagram
+    participant Usuario as Usuario (Navegador Web)
+    participant Frontend as Frontend Web (Nginx/Proxy)
+    participant API as API Backend (Spring Boot)
+    participant DB as Base de Datos (PostgreSQL)
+
+    Usuario->>Frontend: Abre la aplicación
+    Frontend->>API: GET /api/v1/system/status
+    API->>DB: Consultar estado de inicialización
+    DB-->>API: Resultado (initialized: true/false)
+    API-->>Frontend: { initialized: false }
+    Frontend-->>Usuario: Mostrar pantalla de configuración inicial
+
+    Note over API,DB: Una vez inicializado<br/>/system/status responderá<br/>{ initialized: true }

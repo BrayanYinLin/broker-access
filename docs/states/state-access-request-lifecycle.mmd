@@ -1,0 +1,14 @@
+stateDiagram-v2
+    [*] --> PENDIENTE : Usuario crea solicitud
+
+    PENDIENTE --> APROBADA : Admin aprueba
+    PENDIENTE --> RECHAZADA : Admin rechaza
+    PENDIENTE --> CANCELADA : Usuario cancela
+
+    APROBADA --> EXPIRADA : Tiempo límite alcanzado
+    APROBADA --> REVOCADA : Admin revoca antes de expirar
+
+    RECHAZADA --> [*]
+    CANCELADA --> [*]
+    EXPIRADA --> [*]
+    REVOCADA --> [*]

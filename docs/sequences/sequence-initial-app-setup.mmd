@@ -1,0 +1,18 @@
+---
+title: Secuencia de inicializado del sistema (Creación del admin)
+---
+
+sequenceDiagram
+    participant Admin as Administrador (Usuario Inicial)
+    participant Frontend as Frontend Web (Nginx/Proxy)
+    participant API as API Backend (Spring Boot)
+    participant DB as Base de Datos (PostgreSQL)
+
+    %% Crear primer usuario administrador
+    Admin->>Frontend: Envia formulario de creación de admin
+    Frontend->>API: POST /api/v1/setup/admin { usuario, correo,contraseña }
+    API->>DB: Insertar usuario admin y registrar log
+    API->>DB: Actualizar estado de sistema (inicializado)
+    DB-->>API: Confirmación de operaciones
+    API-->>Frontend: Respuesta: admin creado
+    Frontend-->>Admin: Renderiza dashboard inicial
